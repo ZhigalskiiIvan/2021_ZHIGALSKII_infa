@@ -102,7 +102,7 @@ def drawEarRight(x, y):
 
 
 def drawface(x, y):
-    imageFace = pygame.image.load('face.png')
+    imageFace = pygame.image.load('pngs/face.png')
     sizeFace = imageFace.get_size()
     sizeFace = list(sizeFace)
     sizeFace = round((sizeFace[0]) / kFace), round((sizeFace[1]) / kFace)
@@ -156,7 +156,7 @@ def drawpandabody(x, y):
 
 
 def drawpandapaw1(x, y):
-    imagePaw1 = pygame.image.load('paw1.png')
+    imagePaw1 = pygame.image.load('pngs/paw1.png')
     sizePaw1 = imagePaw1.get_size()
     sizePaw1 = list(sizePaw1)
     sizePaw1 = round((sizePaw1[0]) / kPaw1), round((sizePaw1[1]) / kPaw1)
@@ -166,7 +166,7 @@ def drawpandapaw1(x, y):
 
 
 def drawpandapaw2(x, y):
-    imagePaw2 = pygame.image.load('paw2.png')
+    imagePaw2 = pygame.image.load('pngs/paw2.png')
     sizePaw2 = imagePaw2.get_size()
     sizePaw2 = list(sizePaw2)
     sizePaw2 = round((sizePaw2[0]) / kPaw2), round((sizePaw2[1]) / kPaw2)
@@ -176,7 +176,7 @@ def drawpandapaw2(x, y):
 
 
 def drawpandapaw3(x, y):
-    imagePaw3 = pygame.image.load('paw3.png')
+    imagePaw3 = pygame.image.load('pngs/paw3.png')
     sizePaw3 = imagePaw3.get_size()
     sizePaw3 = list(sizePaw3)
     sizePaw3 = round((sizePaw3[0]) / kPaw2), round((sizePaw3[1]) / kPaw2)
