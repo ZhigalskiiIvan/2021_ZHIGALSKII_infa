@@ -47,7 +47,6 @@ kPalma2 = 0.9
 kPalma3 = 1.6
 kPalma4 = 1.3
 
-
 podgonX1 = 140
 podgonY1 = 330
 podgonX2 = 0
