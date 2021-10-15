@@ -1,10 +1,8 @@
 import random
-
 import pygame
 from pygame.draw import circle, rect
 from random import randint
 from math import sqrt, floor
-
 from pygame.font import Font
 
 pygame.init()
@@ -12,7 +10,7 @@ pygame.font.init()
 
 display_width = 1200
 display_height = 800
-FPS = 25
+FPS = 160
 screen = pygame.display.set_mode((display_width, display_height))
 deltatime = 1 / FPS
 max_speed = 150
@@ -23,11 +21,14 @@ max_radius = 65
 point_to_common_ball = 1
 point_to_pulsing_ball = 2
 countDiffObj = 2
-fontSize = 60
+fontSize = 45
 
-unitTextSurfWidth = 25
+unitTextSurfWidth = 40
+unitTextSurfHeight = 50
 
-myfont: Font = pygame.font.SysFont('Pixel Times/Pixel Times.ttf', fontSize)
+fontName = 'back-to-1982/BACKTO1982.ttf'
+
+myfont: Font = pygame.font.Font(fontName, fontSize)
 
 ballsLifeTime = 3
 beginCreateCoolDown = 0.5
@@ -35,20 +36,20 @@ beginCreateCoolDown = 0.5
 RED = (200, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
-GREEN = (0, 200, 0)
+GREEN = (0, 255, 0)
 MAGENTA = (255, 0, 255)
 CYAN = (0, 255, 255)
 BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 backgroundColor = (255, 239, 205)
-winTextColor = (0, 255, 0)
+winTextColor = (0, 200, 0)
 failedTextColor = (255, 0, 0)
 resColor = (255 - backgroundColor[0], 255 - backgroundColor[1], 255 - backgroundColor[2])
 
 leftedge = 0
 upedge = 0
-downedge = display_height
-rightedge = display_width
+downedge = display_height - 0
+rightedge = display_width - 0
 
 
 class Ball:
@@ -146,14 +147,14 @@ def event_process():
      True - в ином случае и возвращает это значение
     :return: новое значение очков игрока
     """
-    finish = finished
+    finish_status = finished
     newwinpoints = winpoints
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            finish = True
+            finish_status = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             newwinpoints = mouse_button_click(event)
-    return finish, newwinpoints
+    return finish_status, newwinpoints
 
 
 def ball_click_exam(xpush, ypush):
@@ -305,23 +306,39 @@ def ballsmain():
     return newfailedpoint, time
 
 
-def points_surfaces_update():
+def fail_points_update():
     """
-    обновляет количество проигрышных и выигрышных очков игрока на экране, увеличивает шрифт написания выигрышных
+    обновляет количество проигрышных очков игрока на экране
+    """
+    failed_font_size = fontSize
+    failed_font = pygame.font.Font(fontName, failed_font_size)
+    failedpoint_textsurface = failed_font.render(failedpoints, False, failedTextColor)
+    rect(screen, backgroundColor,
+         [6, 6, unitTextSurfWidth * len(failedpoints), unitTextSurfHeight * (failed_font_size / fontSize)])
+    screen.blit(failedpoint_textsurface, (6, 6))
+
+
+def win_points_update():
+    """
+    обновляет количество выигрышных очков игрока на экране, увеличивает шрифт написания выигрышных
     очков в случае повышения уровня сложности (каждые 15 выигрышных очков)
     """
-    failed_font = pygame.font.SysFont('Pixel Times/Pixel Times.ttf', fontSize)
-    win_font = pygame.font.SysFont('Pixel Times/Pixel Times.ttf', fontSize * diff_level)
-    failed_font_size = fontSize
-    win_font_size = fontSize * diff_level
-    failedpoint_textsurface = failed_font.render(failedpoints, False, failedTextColor)
+    win_font_size = round(fontSize * sqrt(diff_level))
+    win_font = pygame.font.Font(fontName, win_font_size)
     winpoint_textsurface = win_font.render(winpoints, False, winTextColor)
-    rect(screen, backgroundColor, [0, 0, unitTextSurfWidth * len(failedpoints), failed_font_size])
-    rect(screen, backgroundColor, [display_width - (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints), 0,
-                                   (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints), win_font_size])
-    screen.blit(failedpoint_textsurface, (0, 0))
+    rect(screen, backgroundColor, [display_width - (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints), 6,
+                                   (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints),
+                                   unitTextSurfHeight * (win_font_size / fontSize)])
     screen.blit(winpoint_textsurface,
-                (display_width - (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints), 0))
+                (display_width - (win_font_size / fontSize) * unitTextSurfWidth * len(winpoints), 6))
+
+
+def points_surfaces_update():
+    """
+    вызывыает функции обновления надписей очков
+    """
+    fail_points_update()
+    win_points_update()
 
 
 def difficult_update():
@@ -346,12 +363,33 @@ def end_text_render(font, y):
     screen.blit(font, (x, y))
 
 
+def print_new_high_score(font):
+    """
+    выводит на экран надпись в случайе, если рекорд побит
+    :param font: шрифт
+    """
+    game_over_font = font.render("New score: " + winpoints, False, resColor)
+    end_text_render(game_over_font, display_height / 2 - game_over_font.get_height() / 2)
+
+
+def print_score(font, high_score):
+    """
+    выводит на экран надпись в том случае, если рекорд не побит
+    :param font: шрифт
+    :param high_score: рекорд
+    """
+    game_over_font = font.render("Your score: " + winpoints, False, resColor)
+    end_text_render(game_over_font, display_height / 2 - game_over_font.get_height())
+    game_over_font = font.render("High score: " + high_score, False, resColor)
+    end_text_render(game_over_font, display_height / 2 + game_over_font.get_height())
+
+
 def score_treatment():
     """
     считывает из файла лучший рекорд, сравнивает с результатом игрока и пишет соответстстующую запись на экране
     :return: список результатов с новым значением
     """
-    end_screen_font = pygame.font.SysFont('Pixel Times/Pixel Times.ttf', fontSize * 2)
+    end_screen_font = pygame.font.Font(fontName, int(fontSize * 1.5))
     with open("high_scores.txt", "r") as F:
         results = F.readlines()
         high_score = ""
@@ -359,26 +397,36 @@ def score_treatment():
             high_score = results[0].split("\n")[0]
         if high_score == "":
             results = [winpoints + "\n"]
-            game_over_font = end_screen_font.render("New score: " + winpoints, False, resColor)
-            end_text_render(game_over_font, display_height / 2 - game_over_font.get_height() / 2)
+            print_new_high_score(end_screen_font)
         elif int(high_score) < int(winpoints):
             results += [winpoints + "\n"]
-            game_over_font = end_screen_font.render("New score: " + winpoints, False, resColor)
-            end_text_render(game_over_font, display_height / 2 - game_over_font.get_height() / 2)
+            print_new_high_score(end_screen_font)
         else:
             results += [winpoints + "\n"]
-            game_over_font = end_screen_font.render("Your score: " + winpoints, False, resColor)
-            end_text_render(game_over_font, display_height / 2 - game_over_font.get_height())
-            game_over_font = end_screen_font.render("High score: " + high_score, False, resColor)
-            end_text_render(game_over_font, display_height / 2 + game_over_font.get_height())
+            print_score(end_screen_font, high_score)
         return results
+
+
+def exclude_repeatitive(withreps):
+    """
+    собирает массив из различных элементов массива withreps и возвращает обновленный массив
+    :param withreps: массив, в котором есть повторяющиеся элементы
+    :return: массив из различных(неповторяющихся) элементов массива withreps
+    """
+    withoutreps = []
+    for element in withreps:
+        if not (element in withoutreps):
+            withoutreps.append(element)
+    return withoutreps
 
 
 def game_over():
     """
-    вызывает функцию, которая возвращает обновленный список всех результатов, новый список сортируеты и записывает в файл
+    вызывает функцию, которая возвращает обновленный список всех результатов,
+    новый список сортируеты и записывает в файл
     """
     results = score_treatment()
+    results = exclude_repeatitive(results)
     results.sort(reverse=True, key=int)
     new_text = ""
     for i in range(len(results)):
