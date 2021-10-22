@@ -173,7 +173,7 @@ def ball_click_exam(xpush, ypush):
         r = ball.r
         dist_to_center = sqrt((x - xpush) ** 2 + (y - ypush) ** 2)
         if dist_to_center <= r:
-            ball.die()
+            ball.die_target()
             balls.remove(ball)
             winpoint = str(int(winpoint) + ball.point_to_tap)
     return winpoint
@@ -229,7 +229,7 @@ def balls_natural_death():
     failpoint = failedpoints
     for ball in balls:
         if ball.lifetime >= ballsLifeTime:
-            ball.die()
+            ball.die_target()
             balls.remove(ball)
             failpoint = str(int(failpoint) + 1)
 
