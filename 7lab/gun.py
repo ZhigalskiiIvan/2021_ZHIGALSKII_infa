@@ -162,12 +162,17 @@ class Target:
 
     def new_target(self):
         """ Инициализация новой цели. """
-        pass
+        self.r = randint(2, 50)
+        self.y = randint(300, 550)
+        self.x = randint(600, 780)
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
-
+        self.live -= 1
+        if self.live == 0:
+            self.live = 1
+            self.new_target()
 
     def draw(self):
         pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
