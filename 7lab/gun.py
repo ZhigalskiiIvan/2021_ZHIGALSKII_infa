@@ -308,6 +308,14 @@ def lvl_check(_targets):
     return _targets, _text_time, _lvl
 
 
+def del_elems(_balls):
+    """
+    возвращает список без элементов
+    """
+    _balls = []
+    return _balls
+
+
 def main():
     """
     выполняет основные действия игры
@@ -323,6 +331,7 @@ def main():
     gun.power_up()
     _targets, _text_time, _lvl = lvl_check(_targets)
     if _text_time > 0:
+        _balls = del_elems(_balls)
         _text_time = update_text(_text_time)
     else:
         update_pics()
